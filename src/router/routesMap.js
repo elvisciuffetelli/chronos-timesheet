@@ -8,11 +8,9 @@ import withCapabilities from '../hoc/withCapabilities';
 import capabilityType from '../constants/capabilityType';
 import Unauthorized from '../components/unauthorized/Unauthorized';
 import NotFound from '../views/notFound/NotFound';
-import UserRequest from '../views/request/UserRequest';
 
 const dashboardCapabilities = [capabilityType.USER.GUIDELINES];
 const userCreateCapabilities = [capabilityType.USER.GUIDELINES];
-const userRequestCapabilities = [capabilityType.USER.GUIDELINES];
 
 export const path = {
   dashboard: '/dashboard',
@@ -38,18 +36,13 @@ export default {
   },
   timesheet: {
     path: path.timesheet,
-    component: withOidcSecure(withCapabilities(Timesheet, [])),
+    component: withOidcSecure(Timesheet),
     requiredCapabilities: []
   },
   userCreate: {
     path: path.userCreate,
     component: withOidcSecure(withCapabilities(UserCreate, userCreateCapabilities)),
     requiredCapabilities: userCreateCapabilities
-  },
-  userRequest: {
-    path: path.userRequest,
-    component: withOidcSecure(withCapabilities(UserRequest, userRequestCapabilities)),
-    requiredCapabilities: userRequestCapabilities
   },
   unauthorized: {
     path: path.unauthorized,

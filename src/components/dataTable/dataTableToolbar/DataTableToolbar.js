@@ -12,12 +12,14 @@ import styles from './DataTableToolbar.style';
 
 // eslint-disable-next-line
 let DataTableToolbar = props => {
-  const { numSelected, classes } = props;
+  const {
+    numSelected, classes, toolbarTitle, isFilterable
+  } = props;
 
   return (
     <Toolbar
       className={classNames(classes.root, {
-        [classes.highlight]: numSelected > 0,
+        [classes.highlight]: numSelected > 0
       })}
     >
       <div className={classes.title}>
@@ -27,25 +29,26 @@ let DataTableToolbar = props => {
           </Typography>
         ) : (
           <Typography className={classes.titleText} variant="h6" id="tableTitle">
-            Users
+            {toolbarTitle}
           </Typography>
         )}
       </div>
       <div className={classes.spacer} />
       <div className={classes.actions}>
-        {numSelected > 0 ? (
+        {numSelected > 0 && (
           <Tooltip title="Delete">
             <IconButton aria-label="Delete">
               <DeleteIcon />
             </IconButton>
           </Tooltip>
-        ) : (
+        )}
+        {isFilterable ? (
           <Tooltip title="Filter list">
             <IconButton className={classes.filterIcon} aria-label="Filter list">
               <FilterListIcon />
             </IconButton>
           </Tooltip>
-        )}
+        ) : null}
       </div>
     </Toolbar>
   );
@@ -53,7 +56,7 @@ let DataTableToolbar = props => {
 
 DataTableToolbar.propTypes = {
   classes: PropTypes.object.isRequired,
-  numSelected: PropTypes.number.isRequired,
+  numSelected: PropTypes.number.isRequired
 };
 
 export default withStyles(styles)(DataTableToolbar);

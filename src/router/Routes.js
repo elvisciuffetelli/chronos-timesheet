@@ -21,10 +21,6 @@ const Routes = () => (
               <Route path={routesMap.dashboard.path} component={routesMap.dashboard.component} />
               <Route path={routesMap.timesheet.path} component={routesMap.timesheet.component} />
               <Route path={routesMap.userCreate.path} component={routesMap.userCreate.component} />
-              <Route
-                path={routesMap.userRequest.path}
-                component={routesMap.userRequest.component}
-              />
               <Route component={routesMap.notfound.component} />
               <Route path={routesMap.notfound.path} component={routesMap.notfound.component} />
             </Switch>

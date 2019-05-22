@@ -4,10 +4,9 @@ import { withStyles } from '@material-ui/core/styles';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
-import TablePagination from '@material-ui/core/TablePagination';
 import TableRow from '@material-ui/core/TableRow';
+import Grid from '@material-ui/core/Grid';
 import Paper from '@material-ui/core/Paper';
-import Checkbox from '@material-ui/core/Checkbox';
 import DataTableHeader from '../dataTableHeader/DataTableHeader';
 import DataTableToolbar from '../dataTableToolbar/DataTableToolbar';
 import styles from './DataTable.style';
@@ -19,32 +18,18 @@ class DataTable extends React.Component {
     this.state = {
       order: 'asc',
       orderBy: '',
-      selected: [],
-      page: 0,
-      rowsPerPage: 5,
+      selected: []
     };
 
     this.handleRequestSort = this.handleRequestSort.bind(this);
     this.handleSelectAllClick = this.handleSelectAllClick.bind(this);
     this.handleClick = this.handleClick.bind(this);
-    this.handleChangePage = this.handleChangePage.bind(this);
-    this.handleChangeRowsPerPage = this.handleChangeRowsPerPage.bind(this);
     this.isSelected = this.isSelected.bind(this);
   }
 
-  handleRequestSort(event, property) {
-    const orderBy = property;
-    const order = 'desc';
-    this.setState({ order, orderBy });
-  }
-
-  handleSelectAllClick(event) {
-    if (event.target.checked) {
-      const { data } = this.props;
-      this.setState({ selected: data.map(n => n.id) });
-      return;
-    }
-    this.setState({ selected: [] });
+  isSelected(id) {
+    const { selected } = this.state;
+    return selected.indexOf(id) !== -1;
   }
 
   handleClick(event, id) {
@@ -61,104 +46,73 @@ class DataTable extends React.Component {
     } else if (selectedIndex > 0) {
       newSelected = newSelected.concat(
         selected.slice(0, selectedIndex),
-        selected.slice(selectedIndex + 1),
+        selected.slice(selectedIndex + 1)
       );
     }
 
     this.setState({ selected: newSelected });
   }
 
-  handleChangePage(event, page) {
-    this.setState({ page });
+  handleSelectAllClick(event) {
+    if (event.target.checked) {
+      const { data } = this.props;
+      this.setState({ selected: data.map(n => n.id) });
+      return;
+    }
+    this.setState({ selected: [] });
   }
 
-  handleChangeRowsPerPage(event) {
-    this.setState({ rowsPerPage: event.target.value });
-  }
-
-  isSelected(id) {
-    const { selected } = this.state;
-    return selected.indexOf(id) !== -1;
+  handleRequestSort(event, property) {
+    const orderBy = property;
+    const order = 'desc';
+    this.setState({ order, orderBy });
   }
 
   render() {
     const {
-      classes, data, rows, isCheckable,
+      classes,
+      data,
+      rows,
+      isCheckable,
+      page,
+      rowsPerPage,
+      toolbarTitle,
+      children
     } = this.props;
-    const {
-      order, orderBy, selected, rowsPerPage, page,
-    } = this.state;
+    const { order, orderBy, selected } = this.state;
     const emptyRows = rowsPerPage - Math.min(rowsPerPage, data.length - page * rowsPerPage);
+
+    const childrenTableCellsWithProps = React.Children.map(children, child =>
+      React.cloneElement(child, { handleClick: this.handleClick })
+    );
 
     return (
       <Paper className={classes.root}>
-        <DataTableToolbar numSelected={selected.length} />
+        <DataTableToolbar numSelected={selected.length} toolbarTitle={toolbarTitle} />
         <div className={classes.tableWrapper}>
-          <Table className={classes.table} aria-labelledby="tableTitle">
-            <DataTableHeader
-              isCheckable={isCheckable}
-              rows={rows}
-              numSelected={selected.length}
-              order={order}
-              orderBy={orderBy}
-              onSelectAllClick={this.handleSelectAllClick}
-              onRequestSort={this.handleRequestSort}
-              rowCount={data.length}
-            />
-            <TableBody>
-              {data.map((item) => {
-                const isSelected = this.isSelected(item.id);
-                return (
-                  <TableRow
-                    hover
-                    role="checkbox"
-                    aria-checked={isSelected}
-                    tabIndex={-1}
-                    key={item.id}
-                    selected={isSelected}
-                  >
-                    <TableCell padding="checkbox">
-                      {isCheckable && (
-                        <Checkbox
-                          onClick={event => this.handleClick(event, item.id)}
-                          checked={isSelected}
-                        />
-                      )}
-                    </TableCell>
-
-                    <TableCell component="th" scope="row" padding="none">
-                      {item.colOne}
-                    </TableCell>
-                    <TableCell align="left">{item.colTwo}</TableCell>
-                    <TableCell align="left">{item.colThree}</TableCell>
-                    <TableCell align="left">{item.colFour}</TableCell>
-                    <TableCell align="left">{item.colFive}</TableCell>
+          <Grid item xs={12}>
+            <Table className={classes.table} aria-labelledby="tableTitle">
+              <DataTableHeader
+                isCheckable={isCheckable}
+                rows={rows}
+                numSelected={selected.length}
+                order={order}
+                orderBy={orderBy}
+                onSelectAllClick={this.handleSelectAllClick}
+                onRequestSort={this.handleRequestSort}
+                rowCount={data.length}
+              />
+              <TableBody>
+                {childrenTableCellsWithProps}
+                {emptyRows > 0 && (
+                  <TableRow style={{ height: 49 * emptyRows }}>
+                    <TableCell colSpan={6} />
                   </TableRow>
-                );
-              })}
-              {emptyRows > 0 && (
-                <TableRow style={{ height: 49 * emptyRows }}>
-                  <TableCell colSpan={6} />
-                </TableRow>
-              )}
-            </TableBody>
-          </Table>
+                )}
+              </TableBody>
+            </Table>
+          </Grid>
         </div>
-        <TablePagination
-          rowsPerPageOptions={[5, 10, 25]}
-          component="div"
-          count={data.length}
-          rowsPerPage={rowsPerPage}
-          page={page}
-          backIconButtonProps={{
-            'aria-label': 'Previous Page',
-          }}
-          nextIconButtonProps={{
-            'aria-label': 'Next Page',
-          }}
-          onChangePage={this.handleChangePage}
-          onChangeRowsPerPage={this.handleChangeRowsPerPage}
-        />
       </Paper>
     );
   }
@@ -168,11 +122,11 @@ DataTable.propTypes = {
   classes: PropTypes.object.isRequired,
   data: PropTypes.array.isRequired,
   rows: PropTypes.array.isRequired,
-  isCheckable: PropTypes.bool,
+  isCheckable: PropTypes.bool
 };
 
 DataTable.defaultProps = {
-  isCheckable: false,
+  isCheckable: false
 };
 
 export default withStyles(styles)(DataTable);

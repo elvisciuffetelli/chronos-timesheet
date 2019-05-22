@@ -9,7 +9,6 @@ import Autosuggest from 'react-autosuggest';
 import match from 'autosuggest-highlight/match';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import parse from 'autosuggest-highlight/parse';
-import API from '../../backendApi/api/Api';
 import debounce from '../../utils/debounce';
 
 function renderInputComponent(inputProps) {

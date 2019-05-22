@@ -22,12 +22,6 @@ const linksData = [
     route: routesMap.timesheet.path
   },
   {
-    text: 'User Request',
-    icon: 'edit',
-    requiredCapabilities: routesMap.userRequest.requiredCapabilities,
-    route: routesMap.userRequest.path
-  },
-  {
     text: 'Crea Utente',
     icon: 'create',
     requiredCapabilities: routesMap.userCreate.requiredCapabilities,
@@ -41,7 +35,7 @@ const LinksList = () => {
 
   useEffect(() => {
     setCapabilityLinks(
-      linksData.filter(l => l.requiredCapabilities.some(c => capabilities.includes(c)))
+      linksData.filter(f => capabilities.some(x => x.includes(f.requiredCapabilities)))
     );
   }, [capabilities]);
 

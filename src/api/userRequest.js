@@ -1,38 +1,23 @@
 import chronosClient from './chronosClient';
 
-/**
- * @returns {Promise<[{count: 0, requests: [{
-        "id": String,
-        "requestType": 0 | 1 | 2,
-        "requestReason": String,
-        "fromDay": "DD-MM-YYYY",
-        "toDay": "DD-MM-YYYY",
-        "fromHour": String,
-        "toHour": String,
-        "requestState": String,
-        "managementDate": String
-      }]}>}
-*/
-function getPagedRequests({
-  skip = 0,
-  take = 20,
-  requestType = 0,
-  requestState = 0,
-  fromDay = '01-01-1900',
-  toDay = '01-01-1900'
-}) {
+function getPagedRequests(value) {
   return chronosClient
     .get('/Request/GetPagedRequests', {
-      params: {
-        skip,
-        take,
-        requestType,
-        requestState,
-        fromDay,
-        toDay
-      }
+      value
     })
-    .then(({ data }) => data.content);
+    .then(({ data }) =>
+      data.content.requests.map(request => ({
+        id: request.id,
+        type: request.requestType,
+        fromDay: request.fromDay,
+        toDay: request.toDay,
+        fromHour: request.fromHour,
+        toHour: request.toHour,
+        reason: request.requestReason,
+        requestState: request.requestState,
+        managementDate: request.managementDate
+      }))
+    );
 }
 
 export default getPagedRequests;

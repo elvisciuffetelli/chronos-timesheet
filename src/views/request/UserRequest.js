@@ -1,69 +1,71 @@
 import React, { Component } from 'react';
 import withStyles from '@material-ui/core/styles/withStyles';
-import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
 import PropTypes from 'prop-types';
+import TableCells from './UserRequests.tableCells';
+import { rowsSmallSize, rowsLargeSize } from './UserRequest.header';
 import styles from './UserRequest.style';
 import getPagedRequests from '../../api/userRequest';
 import DataTable from '../../components/dataTable/dataTable/DataTable';
-
-const rowHeaders = [
-  {
-    id: 'id',
-    numeric: false,
-    disablePadding: false,
-    label: '#'
-  },
-  {
-    id: 'fromDay',
-    numeric: false,
-    disablePadding: false,
-    label: 'Da'
-  },
-  {
-    id: 'toDay',
-    numeric: false,
-    disablePadding: false,
-    label: 'A'
-  }
-];
-
-const requestTypeEnum = {
-  0: 'Creata',
-  1: 'Accettata',
-  2: 'Rifiutata'
-};
+import debounce from '../../utils/debounce';
 
 class UserRequest extends Component {
-  state = {
-    requests: []
-  };
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      requests: [],
+      headerRows: rowsLargeSize,
+      windowWidth: window.innerWidth || 960
+    };
+
+    window.addEventListener('resize', debounce(this.handleResize, 100));
+  }
 
   componentDidMount() {
+    this.handleResize();
     getPagedRequests({
       skip: 0,
-      take: 10,
-      requestState: 2
+      take: 10
     }).then(res => {
       console.log(res);
-      this.setState({ requests: res.requests });
+      this.setState({ requests: res });
     });
   }
 
+  componentWillUnmount() {
+    window.removeEventListener('resize', this.handleResize);
+  }
+
+  handleResize = () => {
+    const { windowWidth } = this.state;
+    this.setState({
+      windowWidth: window.innerWidth
+    });
+    console.log(windowWidth);
+    if (windowWidth <= 959) {
+      this.setState({ headerRows: rowsSmallSize });
+    } else if (windowWidth >= 960) {
+      this.setState({ headerRows: rowsLargeSize });
+    }
+  };
+
   render() {
     const { classes } = this.props;
-    const { requests } = this.state;
+    const { requests, headerRows } = this.state;
 
     return (
       <React.Fragment>
         <div className={classes.container}>
-          <Paper elevation={1} className={classes.paper}>
-            <Typography variant="h4" gutterBottom>
-              W i datatable
-            </Typography>
-          </Paper>
+          <Typography variant="h4" gutterBottom>
+            Ultime richieste effettuate
+          </Typography>
 
-          <DataTable rows={rowHeaders} data={requests} />
+          <DataTable rows={headerRows} data={requests} toolbarTitle="Ultime richieste">
+            {requests.map(request => (
+              <TableCells isCheckable={false} item={request} key={request.id} />
+            ))}
+          </DataTable>
         </div>
       </React.Fragment>
     );

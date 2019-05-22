@@ -4,7 +4,9 @@
  */
 
 const customColors = {
-  ERROR_COLOR_1: '#cf003d',
+  ERROR_COLOR: '#CC0000',
+  SUCCESS_COLOR: '#007E33',
+  WARNING_COLOR: '#FF8800',
 
   WHITE: '#fff',
   BLACK: '#000',

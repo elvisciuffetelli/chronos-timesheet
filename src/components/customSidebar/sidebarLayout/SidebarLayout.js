@@ -31,18 +31,18 @@ class SidebarLayout extends React.Component {
     this.handleDrawerClose = this.handleDrawerClose.bind(this);
   }
 
-  handleDrawerOpen() {
-    this.setState({ open: true });
-  }
+  handleLogout = logoutFn => () => {
+    history.push('/');
+    logoutFn();
+  };
 
   handleDrawerClose() {
     this.setState({ open: false });
   }
 
-  handleLogout = logoutFn => () => {
-    history.push('/');
-    logoutFn();
-  };
+  handleDrawerOpen() {
+    this.setState({ open: true });
+  }
 
   render() {
     const { classes, theme, children } = this.props;

@@ -1,30 +1,19 @@
+import colors from '../../assets/styles/colors';
+
 const styles = theme => ({
-  paper: {
-    marginTop: theme.spacing.unit * 3,
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    padding: `${theme.spacing.unit * 5}px ${theme.spacing.unit * 5}px ${theme.spacing.unit * 5}px`
+  Creata: {
+    color: colors.WARNING_COLOR
   },
-  container: {
-    maxWidth: '800px',
-    margin: '0 auto'
+  Approvata: {
+    color: colors.SUCCESS_COLOR
   },
-  textField: {
-    width: '100%',
-    marginTop: '12px'
+  Respinta: {
+    color: colors.ERROR_COLOR
   },
-  menu: {
-    width: 100
-  },
-  chip: {
-    margin: theme.spacing.unit / 4,
-    backgroundColor: 'yellow'
-  },
-  selectLabel: {
-    fontSize: '12px',
-    color: 'rgba(0, 0, 0, 0.54)',
-    lineHeight: '1'
+  hideCellOnSmallSize: {
+    [theme.breakpoints.down('sm')]: {
+      display: 'none'
+    }
   }
 });
 
